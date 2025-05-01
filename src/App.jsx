@@ -1,8 +1,14 @@
 import { useState } from "react";
 import "./App.css";
 
+// Use different URLs for development and production
+const BACKEND_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:8080"
+    : "https://mtgbackend.onrender.com";
+
 export default function App() {
-  const [view, setView] = useState("login"); // "login", "register", "dashboard"
+  const [view, setView] = useState("login");
   const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token") || "");
   const [message, setMessage] = useState("");
 
@@ -11,7 +17,7 @@ export default function App() {
     const username = e.target.username.value;
     const password = e.target.password.value;
 
-    const res = await fetch("/api/login", {
+    const res = await fetch(`${BACKEND_URL}/api/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -33,7 +39,7 @@ export default function App() {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const res = await fetch("/api/register", {
+    const res = await fetch(`${BACKEND_URL}/api/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password }),
@@ -57,7 +63,7 @@ export default function App() {
       return;
     }
 
-    const res = await authFetch("/api/update-email", {
+    const res = await authFetch(`${BACKEND_URL}/api/update-email`, {
       method: "POST",
       body: JSON.stringify({ new_email: newEmail }),
     });
@@ -79,7 +85,7 @@ export default function App() {
     });
 
     if (res.status === 401) {
-      const refreshRes = await fetch("/api/refresh-token", {
+      const refreshRes = await fetch(`${BACKEND_URL}/api/refresh-token`, {
         method: "POST",
         credentials: "include",
       });
