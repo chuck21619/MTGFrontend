@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const BACKEND_URL = import.meta.env.MODE === "development"
   ? "http://localhost:8080"
@@ -6,7 +8,9 @@ const BACKEND_URL = import.meta.env.MODE === "development"
 
 export default function Dashboard({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
-  const username = localStorage.getItem("username");
+  const [newEmail, setNewEmail] = useState("");
+  const decoded = jwtDecode(accessToken || "");
+  const username = decoded?.username || "Unknown";
 
   const handleLogout = async () => {
     try {
@@ -27,8 +31,7 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   };
 
   const handleUpdateEmail = async () => {
-    const newEmail = document.getElementById("newEmailInput").value.trim();
-    if (!accessToken || !newEmail) {
+    if (!accessToken || !newEmail.trim()) {
       alert("Please log in and enter a valid email.");
       return;
     }
@@ -43,13 +46,11 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   };
 
   async function authFetch(url, options = {}, retry = true) {
-    let token = localStorage.getItem("access_token");
-
     const res = await fetch(url, {
       ...options,
       headers: {
         ...(options.headers || {}),
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     });
@@ -83,7 +84,12 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       </button>
       <div>
         <h3>Update Email</h3>
-        <input id="newEmailInput" type="email" placeholder="Enter new email" />
+        <input
+          type="email"
+          value={newEmail}
+          onChange={(e) => setNewEmail(e.target.value)}
+          placeholder="Enter new email"
+        />
         <button onClick={handleUpdateEmail}>Update Email</button>
       </div>
       <button onClick={handleLogout}>Logout</button>

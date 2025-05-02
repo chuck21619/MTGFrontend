@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Login from "./Login";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
+import PrivateRoute from "./PrivateRoute";
 import "./App.css";
 
 export default function App() {
@@ -17,9 +18,9 @@ export default function App() {
         <Route
           path="/dashboard"
           element={
-            accessToken
-              ? <Dashboard accessToken={accessToken} setAccessToken={setAccessToken} />
-              : <Navigate to="/login" />
+            <PrivateRoute accessToken={accessToken}>
+              <Dashboard accessToken={accessToken} setAccessToken={setAccessToken} />
+            </PrivateRoute>
           }
         />
       </Routes>
