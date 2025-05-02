@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import "./App.css";
 
 // Use different URLs for development and production
@@ -11,6 +12,15 @@ export default function App() {
   const [view, setView] = useState("login");
   const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token") || "");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+
+  useEffect(() => {
+    if (!accessToken && view === "dashboard") {
+      setView("login");
+    }
+    setLoading(false);
+  }, [accessToken, view]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,7 +37,9 @@ export default function App() {
     const data = await res.json();
     if (data.access_token) {
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("username", username);
       setAccessToken(data.access_token);
+      setUsername(username);
       setView("dashboard");
     } else {
       alert(data.message || "Login failed");
@@ -50,12 +62,24 @@ export default function App() {
     alert(data.message || "Registered");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch(`${BACKEND_URL}/api/logout`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+
     localStorage.removeItem("access_token");
     setAccessToken("");
     setView("login");
     alert("You have been logged out.");
   };
+
 
   const handleUpdateEmail = async () => {
     const newEmail = document.getElementById("newEmailInput").value.trim();
@@ -73,7 +97,7 @@ export default function App() {
     alert(data.message || "No response message.");
   };
 
-  async function authFetch(url, options = {}) {
+  async function authFetch(url, options = {}, retry = true) {
     let token = localStorage.getItem("access_token");
 
     const res = await fetch(url, {
@@ -95,7 +119,7 @@ export default function App() {
       if (refreshRes.ok && refreshData.access_token) {
         localStorage.setItem("access_token", refreshData.access_token);
         setAccessToken(refreshData.access_token);
-        return authFetch(url, options);
+        return authFetch(url, options, false);
       } else {
         alert("Session expired. Please log in again.");
         setView("login");
@@ -104,6 +128,10 @@ export default function App() {
     }
 
     return res;
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -116,7 +144,7 @@ export default function App() {
             <input name="password" type="password" placeholder="Password" required />
             <button type="submit">Login</button>
           </form>
-          <a onClick={() => setView("register")} style={{ cursor: "pointer" }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setView("register"); }} style={{ cursor: "pointer" }}>
             Don't have an account? Register
           </a>
         </div>
@@ -131,7 +159,7 @@ export default function App() {
             <input name="password" type="password" placeholder="Password" required />
             <button type="submit">Register</button>
           </form>
-          <a onClick={() => setView("login")} style={{ cursor: "pointer" }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setView("login"); }} style={{ cursor: "pointer" }}>
             Already have an account? Login
           </a>
         </div>
