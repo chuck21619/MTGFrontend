@@ -24,7 +24,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       console.error("Logout error:", err);
     }
 
-    localStorage.removeItem("access_token");
     setAccessToken("");
     navigate("/login");
     alert("You have been logged out.");
@@ -63,7 +62,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
 
       const refreshData = await refreshRes.json();
       if (refreshRes.ok && refreshData.access_token) {
-        localStorage.setItem("access_token", refreshData.access_token);
         setAccessToken(refreshData.access_token);
         return authFetch(url, options, false);
       } else {

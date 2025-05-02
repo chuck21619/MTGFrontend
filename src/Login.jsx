@@ -21,8 +21,6 @@ export default function Login({ setAccessToken }) {
 
     const data = await res.json();
     if (data.access_token) {
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("username", username);
       setAccessToken(data.access_token);
       navigate("/dashboard");
     } else {

@@ -7,7 +7,14 @@ import PrivateRoute from "./PrivateRoute";
 import "./App.css";
 
 export default function App() {
-  const [accessToken, setAccessToken] = useState(localStorage.getItem("access_token") || "");
+  const [accessToken, _setAccessToken] = useState(localStorage.getItem("access_token") || "");
+  const setAccessToken = (newToken) => {
+    localStorage.setItem("access_token", newToken);
+    _setAccessToken(newToken);
+  };
+  useEffect(() => {
+    localStorage.setItem("access_token", accessToken);
+  }, [accessToken]);
 
   return (
     <Router>
