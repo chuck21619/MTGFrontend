@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('valid login navigates to dashboard', async ({ page }) => {
-    await page.goto('http://localhost:5173/login'); // Adjust URL as needed
+    await page.goto('/login'); // Adjust URL as needed
 
     await page.fill('input[name="username"]', 'testuser'); // adjust selectors if different
     await page.fill('input[name="password"]', 'secret');
