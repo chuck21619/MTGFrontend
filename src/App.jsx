@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { useState } from "react";
-import Login from "./Login";
-import Register from "./Register";
-import Dashboard from "./Dashboard";
-import PrivateRoute from "./PrivateRoute";
+import { useState, useEffect } from "react";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
 export default function App() {
