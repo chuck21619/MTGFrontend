@@ -20,6 +20,7 @@
   "homepage": "https://github.com/chuck21619/MTGFrontend#readme",
   "description": "",
   "dependencies": {
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.5.3",
