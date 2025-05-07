@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = import.meta.env.MODE === "development"
-  ? "http://localhost:8080"
-  : "https://mtgbackend.onrender.com";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login({ setAccessToken }) {
   const navigate = useNavigate();

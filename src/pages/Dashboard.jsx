@@ -3,9 +3,6 @@ import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-// const BACKEND_URL = import.meta.env.MODE === "development"
-//   ? "http://localhost:8080"
-//   : "https://mtgbackend.onrender.com";
 
 export default function Dashboard({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
