@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import "./Dashboard.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
   const [newEmail, setNewEmail] = useState("");
+  const [sheetUrl, setSheetUrl] = useState("");
   const decoded = jwtDecode(accessToken || "");
   const username = decoded?.username || "Unknown";
 
@@ -36,6 +38,21 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     const res = await authFetch(`${BACKEND_URL}/api/update-email`, {
       method: "POST",
       body: JSON.stringify({ new_email: newEmail }),
+    });
+
+    const data = await res.json();
+    alert(data.message || "No response message.");
+  };
+
+  const handleUpdateGoogleSheet = async () => {
+    if (!accessToken || !sheetUrl.trim()) {
+      alert("Please log in and enter a valid link.");
+      return;
+    }
+
+    const res = await authFetch(`${BACKEND_URL}/api/update-google-sheet`, {
+      method: "POST",
+      body: JSON.stringify({ new_google_sheet: sheetUrl }),
     });
 
     const data = await res.json();
@@ -73,22 +90,41 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   }
 
   return (
-    <div>
-      <h2>Welcome to your dashboard!</h2>
-      <button onClick={() => console.log("Fetch secret message here")}>
-        Fetch Secret Message
+    <>
+      <button onClick={handleLogout} className="logout-button">
+        Logout
       </button>
-      <div>
-        <h3>Update Email</h3>
-        <input
-          type="email"
-          value={newEmail}
-          onChange={(e) => setNewEmail(e.target.value)}
-          placeholder="Enter new email"
-        />
-        <button onClick={handleUpdateEmail}>Update Email</button>
+
+      <div className="dashboard-container">
+        <h2>Welcome to your dashboard!</h2>
+
+        <div>
+          <input
+            type="email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            placeholder="Enter new email"
+            className="dashboard-input"
+          />
+          <br />
+          <button onClick={handleUpdateEmail} className="update-button">
+            Update Email
+          </button>
+        </div>
+        <div>
+          <label htmlFor="sheet-url">Google Sheet URL:</label>
+          <input
+            id="sheet-url"
+            type="text"
+            placeholder="Enter your sheet URL"
+            value={sheetUrl}
+            onChange={(e) => setSheetUrl(e.target.value)}
+          />
+          <button onClick={handleUpdateGoogleSheet}>Link Sheet</button>
+        </div>
+
       </div>
-      <button onClick={handleLogout}>Logout</button>
-    </div>
+    </>
   );
+
 }

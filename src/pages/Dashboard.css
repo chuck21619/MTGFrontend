@@ -1,0 +1,44 @@
+.dashboard-container {
+  position: relative;
+  padding: 2rem;
+  max-width: 800px;
+  /* remove margin: 0 auto; to left-align the container */
+}
+
+.logout-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #ef4444;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #dc2626;
+}
+
+.dashboard-input {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem;
+  border-radius: 4px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  max-width: 400px;
+}
+
+.update-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  background-color: #2563eb;
+}
