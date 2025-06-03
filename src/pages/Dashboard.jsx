@@ -59,6 +59,16 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     alert(data.message || "No response message.");
   };
 
+  const handlePopulate = async () => {
+    const res = await authFetch(`${BACKEND_URL}/api/populate`, {
+      method: "GET"
+    });
+
+    const data = await res.json();
+    console.log(data.decks);
+    console.log(data.players);
+  }
+
   async function authFetch(url, options = {}, retry = true) {
     const res = await fetch(url, {
       ...options,
@@ -122,7 +132,9 @@ export default function Dashboard({ accessToken, setAccessToken }) {
           />
           <button onClick={handleUpdateGoogleSheet}>Link Sheet</button>
         </div>
-
+        <div>
+          <button onClick={handlePopulate}>populate options</button>
+        </div>
       </div>
     </>
   );
