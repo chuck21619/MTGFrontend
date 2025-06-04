@@ -11,6 +11,15 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   const [sheetUrl, setSheetUrl] = useState("");
   const decoded = jwtDecode(accessToken || "");
   const username = decoded?.username || "Unknown";
+  const [players, setPlayers] = useState([]);
+  const [decks, setDecks] = useState([]);
+  const [selections, setSelections] = useState([
+    { player: "", deck: "" },
+    { player: "", deck: "" },
+    { player: "", deck: "" },
+    { player: "", deck: "" },
+  ]);
+
 
   const handleLogout = async () => {
     try {
@@ -67,7 +76,24 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     const data = await res.json();
     console.log(data.decks);
     console.log(data.players);
+    setPlayers(data.players || []);
+    setDecks(data.decks || []);
   }
+
+  const handleSubmit = async () => {
+    const res = await fetch(`${BACKEND_URL}/api/predict`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ selections }),
+    });
+
+    const data = await res.json();
+    console.log("Prediction result:", data);
+    alert(`Prediction: ${data.prediction || "No prediction returned"}`);
+  };
 
   async function authFetch(url, options = {}, retry = true) {
     const res = await fetch(url, {
@@ -135,6 +161,45 @@ export default function Dashboard({ accessToken, setAccessToken }) {
         <div>
           <button onClick={handlePopulate}>populate options</button>
         </div>
+        <div>
+          <h3>Enter Players and Decks</h3>
+          {selections.map((selection, index) => (
+            <div key={index} style={{ marginBottom: "1rem" }}>
+              <select
+                value={selection.player}
+                onChange={(e) => {
+                  const updated = [...selections];
+                  updated[index].player = e.target.value;
+                  setSelections(updated);
+                }}
+              >
+                <option value="">Select Player</option>
+                {players.map((player) => (
+                  <option key={player} value={player}>
+                    {player}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selection.deck}
+                onChange={(e) => {
+                  const updated = [...selections];
+                  updated[index].deck = e.target.value;
+                  setSelections(updated);
+                }}
+              >
+                <option value="">Select Deck</option>
+                {decks.map((deck) => (
+                  <option key={deck} value={deck}>
+                    {deck}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleSubmit}>Submit to Model</button>
       </div>
     </>
   );
