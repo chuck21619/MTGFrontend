@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const BACKEND_URL = import.meta.env.MODE === "development"
   ? "http://localhost:8080"
@@ -35,7 +36,7 @@ export default function Register() {
         <input name="password" type="password" placeholder="Password" required />
         <button type="submit">Register</button>
       </form>
-      <a href="/login">Already have an account? Login</a>
+      <Link to="/login">Already have an account? Login</Link>
     </div>
   );
 }

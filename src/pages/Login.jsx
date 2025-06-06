@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -34,7 +35,7 @@ export default function Login({ setAccessToken }) {
         <input name="password" type="password" placeholder="Password" required />
         <button type="submit">Login</button>
       </form>
-      <a href="/register">Don't have an account? Register</a>
+      <Link to="/register">Don't have an account? Register</Link>
     </div>
   );
 }
