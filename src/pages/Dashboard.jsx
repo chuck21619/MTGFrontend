@@ -80,19 +80,48 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     setDecks(data.decks || []);
   }
 
-  const handleSubmit = async () => {
+  const handlePredict = async () => {
+
+    // First build the map:
+    const selectionsMap = {};
+    selections.forEach(selection => {
+      selectionsMap[selection.player] = selection.deck;
+    });
+
+    // Now apply padding using your players array:
+    const paddedSelections = players.map(player => {
+      return {
+        player: player,
+        deck: selectionsMap[player] || "none"
+      };
+    });
+
     const res = await fetch(`${BACKEND_URL}/api/predict`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ selections }),
+      body: JSON.stringify({ selections: paddedSelections }),
     });
 
     const data = await res.json();
     console.log("Prediction result:", data);
     alert(`Prediction: ${data.prediction || "No prediction returned"}`);
+  };
+
+  const handleTrain = async () => {
+    const res = await fetch(`${BACKEND_URL}/api/train`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      }
+    });
+
+    const data = await res.json();
+    console.log("Training results:", data);
+    alert(`Training Results: ${data || "No results returned"}`);
   };
 
   async function authFetch(url, options = {}, retry = true) {
@@ -199,7 +228,8 @@ export default function Dashboard({ accessToken, setAccessToken }) {
             </div>
           ))}
         </div>
-        <button onClick={handleSubmit}>Submit to Model</button>
+        <button onClick={handleTrain}>Train</button>
+        <button onClick={handlePredict}>Predict</button>
       </div>
     </>
   );
