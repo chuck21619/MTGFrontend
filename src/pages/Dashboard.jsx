@@ -7,7 +7,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
-  const [newEmail, setNewEmail] = useState("");
   const [sheetUrl, setSheetUrl] = useState("");
   const decoded = jwtDecode(accessToken || "");
   const username = decoded?.username || "Unknown";
@@ -21,22 +20,8 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   ]);
 
 
-  
 
-  const handleUpdateEmail = async () => {
-    if (!accessToken || !newEmail.trim()) {
-      alert("Please log in and enter a valid email.");
-      return;
-    }
 
-    const res = await authFetch(`${BACKEND_URL}/api/update-email`, {
-      method: "POST",
-      body: JSON.stringify({ new_email: newEmail }),
-    });
-
-    const data = await res.json();
-    alert(data.message || "No response message.");
-  };
 
   const handleUpdateGoogleSheet = async () => {
     if (!accessToken || !sheetUrl.trim()) {
@@ -143,20 +128,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     <>
       <div className="dashboard-container">
         <h2>Dashboard</h2>
-
-        <div>
-          <input
-            type="email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            placeholder="Enter new email"
-            className="dashboard-input"
-          />
-          <br />
-          <button onClick={handleUpdateEmail} className="update-button">
-            Update Email
-          </button>
-        </div>
         <div>
           <label htmlFor="sheet-url">Google Sheet URL:</label>
           <input

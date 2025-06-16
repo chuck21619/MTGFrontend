@@ -36,8 +36,8 @@ export default function App() {
           <Route
             path="/profile"
             element={
-              <PrivateRoute accessToken={accessToken}>
-                <Profile />
+              <PrivateRoute accessToken={accessToken} >
+                <Profile accessToken={accessToken} setAccessToken={setAccessToken} />
               </PrivateRoute>
             }
           />
