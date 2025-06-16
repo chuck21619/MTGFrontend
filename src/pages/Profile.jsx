@@ -3,6 +3,22 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Profile({ accessToken, setAccessToken }) {
   const [newEmail, setNewEmail] = useState("");
+  const [sheetUrl, setSheetUrl] = useState("");
+
+  const handleUpdateGoogleSheet = async () => {
+    if (!accessToken || !sheetUrl.trim()) {
+      alert("Please log in and enter a valid link.");
+      return;
+    }
+
+    const res = await authFetch(`${BACKEND_URL}/api/update-google-sheet`, {
+      method: "POST",
+      body: JSON.stringify({ new_google_sheet: sheetUrl }),
+    });
+
+    const data = await res.json();
+    alert(data.message || "No response message.");
+  };
 
   async function authFetch(url, options = {}, retry = true) {
     const res = await fetch(url, {
@@ -64,6 +80,17 @@ export default function Profile({ accessToken, setAccessToken }) {
         <button onClick={handleUpdateEmail} className="update-button">
           Update Email
         </button>
+      </div>
+      <div>
+        <label htmlFor="sheet-url">Google Sheet URL:</label>
+        <input
+          id="sheet-url"
+          type="text"
+          placeholder="Enter your sheet URL"
+          value={sheetUrl}
+          onChange={(e) => setSheetUrl(e.target.value)}
+        />
+        <button onClick={handleUpdateGoogleSheet}>Link Sheet</button>
       </div>
     </>
   );

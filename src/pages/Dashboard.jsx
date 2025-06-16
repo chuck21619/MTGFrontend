@@ -7,7 +7,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard({ accessToken, setAccessToken }) {
   const navigate = useNavigate();
-  const [sheetUrl, setSheetUrl] = useState("");
   const decoded = jwtDecode(accessToken || "");
   const username = decoded?.username || "Unknown";
   const [players, setPlayers] = useState([]);
@@ -18,25 +17,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     { player: "", deck: "" },
     { player: "", deck: "" },
   ]);
-
-
-
-
-
-  const handleUpdateGoogleSheet = async () => {
-    if (!accessToken || !sheetUrl.trim()) {
-      alert("Please log in and enter a valid link.");
-      return;
-    }
-
-    const res = await authFetch(`${BACKEND_URL}/api/update-google-sheet`, {
-      method: "POST",
-      body: JSON.stringify({ new_google_sheet: sheetUrl }),
-    });
-
-    const data = await res.json();
-    alert(data.message || "No response message.");
-  };
 
   const handlePopulate = async () => {
     const res = await authFetch(`${BACKEND_URL}/api/populate`, {
@@ -128,17 +108,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     <>
       <div className="dashboard-container">
         <h2>Dashboard</h2>
-        <div>
-          <label htmlFor="sheet-url">Google Sheet URL:</label>
-          <input
-            id="sheet-url"
-            type="text"
-            placeholder="Enter your sheet URL"
-            value={sheetUrl}
-            onChange={(e) => setSheetUrl(e.target.value)}
-          />
-          <button onClick={handleUpdateGoogleSheet}>Link Sheet</button>
-        </div>
         <div>
           <button onClick={handlePopulate}>populate options</button>
         </div>
