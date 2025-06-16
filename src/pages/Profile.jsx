@@ -76,13 +76,9 @@ export default function Profile({ accessToken, setAccessToken }) {
           placeholder="Enter new email"
           className="dashboard-input"
         />
-        <br />
-        <button onClick={handleUpdateEmail} className="update-button">
-          Update Email
-        </button>
+        <button onClick={handleUpdateEmail}>Update Email</button>
       </div>
       <div>
-        <label htmlFor="sheet-url">Google Sheet URL:</label>
         <input
           id="sheet-url"
           type="text"
