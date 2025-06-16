@@ -161,7 +161,7 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       </button>
 
       <div className="dashboard-container">
-        <h2>Welcome to your dashboard!</h2>
+        <h2>Dashboard</h2>
 
         <div>
           <input

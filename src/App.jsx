@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile"; // you'll create this file
+import Layout from "./components/Layout";
 import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
@@ -22,14 +24,24 @@ export default function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login setAccessToken={setAccessToken} />} />
         <Route path="/register" element={<Register />} />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute accessToken={accessToken}>
-              <Dashboard accessToken={accessToken} setAccessToken={setAccessToken} />
-            </PrivateRoute>
-          }
-        />
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute accessToken={accessToken}>
+                <Dashboard accessToken={accessToken} setAccessToken={setAccessToken} />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute accessToken={accessToken}>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+        </Route>
       </Routes>
     </Router>
   );
