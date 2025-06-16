@@ -24,7 +24,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login setAccessToken={setAccessToken} />} />
         <Route path="/register" element={<Register />} />
-        <Route element={<Layout />}>
+        <Route element={<Layout accessToken={accessToken} setAccessToken={setAccessToken} />}>
           <Route
             path="/dashboard"
             element={

@@ -21,22 +21,7 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   ]);
 
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${BACKEND_URL}/api/logout`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
-      });
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-
-    setAccessToken("");
-    navigate("/login");
-    alert("You have been logged out.");
-  };
+  
 
   const handleUpdateEmail = async () => {
     if (!accessToken || !newEmail.trim()) {
@@ -156,10 +141,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
 
   return (
     <>
-      <button onClick={handleLogout} className="logout-button">
-        Logout
-      </button>
-
       <div className="dashboard-container">
         <h2>Dashboard</h2>
 
