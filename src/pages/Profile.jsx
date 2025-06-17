@@ -1,9 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Profile({ accessToken, setAccessToken }) {
   const [newEmail, setNewEmail] = useState("");
   const [sheetUrl, setSheetUrl] = useState("");
+
+  useEffect(() => {
+      getProfileInfo();
+  }, []);
+
+  const getProfileInfo = async () => {
+    const res = await authFetch(`${BACKEND_URL}/api/profileInfo`, {
+      method: "GET"
+    });
+
+    const data = await res.json();
+
+    setNewEmail(data.email || "");
+    setSheetUrl(data.googleSheetUrl || "");
+  }
+
 
   const handleUpdateGoogleSheet = async () => {
     if (!accessToken || !sheetUrl.trim()) {
