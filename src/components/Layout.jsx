@@ -29,7 +29,6 @@ export default function Layout({ accessToken, setAccessToken }) {
   return (
     <div className="app-container">
       <div className="sidebar">
-        <h2>My App</h2>
         <nav>
           <ul>
             <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? "active" : ""}>Dashboard</NavLink></li>

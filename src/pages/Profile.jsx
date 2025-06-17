@@ -67,7 +67,7 @@ export default function Profile({ accessToken, setAccessToken }) {
 
   return (
     <>
-      <h2>Profile Page</h2>
+      <h2>Profile</h2>
       <div>
         <input
           type="email"

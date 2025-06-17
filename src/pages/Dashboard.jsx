@@ -106,7 +106,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
 
   return (
     <>
-      <div className="dashboard-container">
         <h2>Dashboard</h2>
         <div>
           <button onClick={handlePopulate}>populate options</button>
@@ -151,7 +150,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
         </div>
         <button onClick={handleTrain}>Train</button>
         <button onClick={handlePredict}>Predict</button>
-      </div>
     </>
   );
 
