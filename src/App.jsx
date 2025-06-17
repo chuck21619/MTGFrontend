@@ -3,25 +3,49 @@ import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile"; // you'll create this file
+import Profile from "./pages/Profile";
 import Layout from "./components/Layout";
 import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 export default function App() {
-  const [accessToken, _setAccessToken] = useState(localStorage.getItem("access_token") || "");
-  const setAccessToken = (newToken) => {
-    localStorage.setItem("access_token", newToken);
-    _setAccessToken(newToken);
-  };
+  const [accessToken, setAccessToken] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Try refreshing token on app load
   useEffect(() => {
-    localStorage.setItem("access_token", accessToken);
-  }, [accessToken]);
+    async function tryAutoLogin() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/refresh-token`, {
+          method: "POST",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (res.ok && data.access_token) {
+          setAccessToken(data.access_token);
+        } else {
+          setAccessToken(""); // not logged in
+        }
+      } catch (err) {
+        console.error("Auto-login failed:", err);
+        setAccessToken("");
+      } finally {
+        setAuthChecked(true);
+      }
+    }
+
+    tryAutoLogin();
+  }, []);
+
+  // Prevent routing until auth check is done
+  if (!authChecked) return <div>Loading...</div>;
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to={accessToken ? "/dashboard" : "/login"} />} />
         <Route path="/login" element={<Login setAccessToken={setAccessToken} />} />
         <Route path="/register" element={<Register />} />
         <Route element={<Layout accessToken={accessToken} setAccessToken={setAccessToken} />}>
@@ -36,7 +60,7 @@ export default function App() {
           <Route
             path="/profile"
             element={
-              <PrivateRoute accessToken={accessToken} >
+              <PrivateRoute accessToken={accessToken}>
                 <Profile accessToken={accessToken} setAccessToken={setAccessToken} />
               </PrivateRoute>
             }

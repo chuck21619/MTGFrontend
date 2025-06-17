@@ -1,17 +1,25 @@
 import { useState, useEffect } from "react";
+import { authFetch } from '../utils/authFetch';
+import { useNavigate } from "react-router-dom";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Profile({ accessToken, setAccessToken }) {
+  const navigate = useNavigate();
   const [newEmail, setNewEmail] = useState("");
   const [sheetUrl, setSheetUrl] = useState("");
 
   useEffect(() => {
-      getProfileInfo();
+    getProfileInfo();
   }, []);
 
   const getProfileInfo = async () => {
     const res = await authFetch(`${BACKEND_URL}/api/profileInfo`, {
       method: "GET"
+    }, {
+      accessToken,
+      setAccessToken,
+      navigate,
+      backendUrl: BACKEND_URL,
     });
 
     const data = await res.json();
@@ -30,41 +38,16 @@ export default function Profile({ accessToken, setAccessToken }) {
     const res = await authFetch(`${BACKEND_URL}/api/update-google-sheet`, {
       method: "POST",
       body: JSON.stringify({ new_google_sheet: sheetUrl }),
+    }, {
+      accessToken,
+      setAccessToken,
+      navigate,
+      backendUrl: BACKEND_URL,
     });
 
     const data = await res.json();
     alert(data.message || "No response message.");
   };
-
-  async function authFetch(url, options = {}, retry = true) {
-    const res = await fetch(url, {
-      ...options,
-      headers: {
-        ...(options.headers || {}),
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.status === 401 && retry) {
-      const refreshRes = await fetch(`${BACKEND_URL}/api/refresh-token`, {
-        method: "POST",
-        credentials: "include",
-      });
-
-      const refreshData = await refreshRes.json();
-      if (refreshRes.ok && refreshData.access_token) {
-        setAccessToken(refreshData.access_token);
-        return authFetch(url, options, false);
-      } else {
-        alert("Session expired. Please log in again.");
-        navigate("/login");
-        return;
-      }
-    }
-
-    return res;
-  }
 
   const handleUpdateEmail = async () => {
     if (!accessToken || !newEmail.trim()) {
@@ -75,6 +58,11 @@ export default function Profile({ accessToken, setAccessToken }) {
     const res = await authFetch(`${BACKEND_URL}/api/update-email`, {
       method: "POST",
       body: JSON.stringify({ new_email: newEmail }),
+    }, {
+      accessToken,
+      setAccessToken,
+      navigate,
+      backendUrl: BACKEND_URL,
     });
 
     const data = await res.json();
