@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import "./Dashboard.css";
 
@@ -18,16 +18,26 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     { player: "", deck: "" },
   ]);
 
+  useEffect(() => {
+    const storedPlayers = JSON.parse(localStorage.getItem("players") || "[]");
+    const storedDecks = JSON.parse(localStorage.getItem("decks") || "[]");
+
+    setPlayers(storedPlayers);
+    setDecks(storedDecks);
+  }, []);
+
   const handlePopulate = async () => {
     const res = await authFetch(`${BACKEND_URL}/api/populate`, {
       method: "GET"
     });
 
     const data = await res.json();
-    console.log(data.decks);
-    console.log(data.players);
-    setPlayers(data.players || []);
-    setDecks(data.decks || []);
+    const playersData = data.players || [];
+    const decksData = data.decks || [];
+    setPlayers(playersData);
+    setDecks(decksData);
+    localStorage.setItem("players", JSON.stringify(playersData));
+    localStorage.setItem("decks", JSON.stringify(decksData));
   }
 
   const handlePredict = async () => {
@@ -106,50 +116,50 @@ export default function Dashboard({ accessToken, setAccessToken }) {
 
   return (
     <>
-        <h2>Dashboard</h2>
-        <div>
-          <button onClick={handlePopulate}>populate options</button>
-        </div>
-        <div>
-          <h3>Enter Players and Decks</h3>
-          {selections.map((selection, index) => (
-            <div key={index} style={{ marginBottom: "1rem" }}>
-              <select
-                value={selection.player}
-                onChange={(e) => {
-                  const updated = [...selections];
-                  updated[index].player = e.target.value;
-                  setSelections(updated);
-                }}
-              >
-                <option value="">Select Player</option>
-                {players.map((player) => (
-                  <option key={player} value={player}>
-                    {player}
-                  </option>
-                ))}
-              </select>
+      <h2>Dashboard</h2>
+      <div>
+        <button onClick={handlePopulate}>populate options</button>
+      </div>
+      <div>
+        <h3>Enter Players and Decks</h3>
+        {selections.map((selection, index) => (
+          <div key={index} style={{ marginBottom: "1rem" }}>
+            <select
+              value={selection.player}
+              onChange={(e) => {
+                const updated = [...selections];
+                updated[index].player = e.target.value;
+                setSelections(updated);
+              }}
+            >
+              <option value="">Select Player</option>
+              {players.map((player) => (
+                <option key={player} value={player}>
+                  {player}
+                </option>
+              ))}
+            </select>
 
-              <select
-                value={selection.deck}
-                onChange={(e) => {
-                  const updated = [...selections];
-                  updated[index].deck = e.target.value;
-                  setSelections(updated);
-                }}
-              >
-                <option value="">Select Deck</option>
-                {decks.map((deck) => (
-                  <option key={deck} value={deck}>
-                    {deck}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ))}
-        </div>
-        <button onClick={handleTrain}>Train</button>
-        <button onClick={handlePredict}>Predict</button>
+            <select
+              value={selection.deck}
+              onChange={(e) => {
+                const updated = [...selections];
+                updated[index].deck = e.target.value;
+                setSelections(updated);
+              }}
+            >
+              <option value="">Select Deck</option>
+              {decks.map((deck) => (
+                <option key={deck} value={deck}>
+                  {deck}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      <button onClick={handleTrain}>Train</button>
+      <button onClick={handlePredict}>Predict</button>
     </>
   );
 
