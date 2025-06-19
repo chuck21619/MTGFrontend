@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { authFetch } from "../utils/authFetch";
 import { useNavigate } from "react-router-dom";
 import { populateOptions } from "../utils/populate";
+import { trainModel } from "../utils/train"; // adjust path as needed
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -64,6 +65,8 @@ export default function Profile({ accessToken, setAccessToken }) {
       setAccessToken,
       navigate,
     });
+
+    await trainModel({ BACKEND_URL, accessToken });
   };
 
   const handleUpdateEmail = async () => {

@@ -1,16 +1,12 @@
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { authFetch } from "../utils/authFetch";
-import { populateOptions } from "../utils/populate";
 import "./Dashboard.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Dashboard({ accessToken, setAccessToken }) {
-  const navigate = useNavigate();
   const decoded = jwtDecode(accessToken || "");
-  const username = decoded?.username || "Unknown";
+  //const username = decoded?.username || "Unknown";
   const [players, setPlayers] = useState([]);
   const [decks, setDecks] = useState([]);
   const [selections, setSelections] = useState([
@@ -57,20 +53,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     alert(`Prediction: ${data.prediction || "No prediction returned"}`);
   };
 
-  const handleTrain = async () => {
-    const res = await fetch(`${BACKEND_URL}/api/train`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    const data = await res.json();
-    console.log("Training results:", data);
-    alert(`Training Results: ${data || "No results returned"}`);
-  };
-
   return (
     <>
       <h2>Dashboard</h2>
@@ -112,7 +94,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
           </div>
         ))}
       </div>
-      <button onClick={handleTrain}>Train</button>
       <button onClick={handlePredict}>Predict</button>
     </>
   );
