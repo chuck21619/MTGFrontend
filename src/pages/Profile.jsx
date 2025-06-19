@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { authFetch } from "../utils/authFetch";
 import { useNavigate } from "react-router-dom";
+import { populateOptions } from "../utils/populate";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -55,6 +56,14 @@ export default function Profile({ accessToken, setAccessToken }) {
 
     const data = await res.json();
     alert(data.message || "No response message.");
+
+    await populateOptions({
+      authFetch,
+      BACKEND_URL,
+      accessToken,
+      setAccessToken,
+      navigate,
+    });
   };
 
   const handleUpdateEmail = async () => {

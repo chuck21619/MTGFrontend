@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { authFetch } from '../utils/authFetch';
+import { authFetch } from "../utils/authFetch";
+import { populateOptions } from "../utils/populate";
 import "./Dashboard.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -27,38 +28,18 @@ export default function Dashboard({ accessToken, setAccessToken }) {
     setDecks(storedDecks);
   }, []);
 
-  const handlePopulate = async () => {
-    const res = await authFetch(`${BACKEND_URL}/api/populate`, {
-      method: "GET"
-    }, {
-      accessToken,
-      setAccessToken,
-      navigate,
-      backendUrl: BACKEND_URL,
-    });
-
-    const data = await res.json();
-    const playersData = data.players || [];
-    const decksData = data.decks || [];
-    setPlayers(playersData);
-    setDecks(decksData);
-    localStorage.setItem("players", JSON.stringify(playersData));
-    localStorage.setItem("decks", JSON.stringify(decksData));
-  }
-
   const handlePredict = async () => {
-
     // First build the map:
     const selectionsMap = {};
-    selections.forEach(selection => {
+    selections.forEach((selection) => {
       selectionsMap[selection.player] = selection.deck;
     });
 
     // Now apply padding using your players array:
-    const paddedSelections = players.map(player => {
+    const paddedSelections = players.map((player) => {
       return {
         player: player,
-        deck: selectionsMap[player] || "none"
+        deck: selectionsMap[player] || "none",
       };
     });
 
@@ -82,7 +63,7 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-      }
+      },
     });
 
     const data = await res.json();
@@ -93,9 +74,6 @@ export default function Dashboard({ accessToken, setAccessToken }) {
   return (
     <>
       <h2>Dashboard</h2>
-      <div>
-        <button onClick={handlePopulate}>populate options</button>
-      </div>
       <div>
         <h3>Enter Players and Decks</h3>
         {selections.map((selection, index) => (
@@ -138,5 +116,4 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       <button onClick={handlePredict}>Predict</button>
     </>
   );
-
 }
