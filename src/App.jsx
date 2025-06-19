@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -14,7 +19,6 @@ export default function App() {
   const [accessToken, setAccessToken] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
 
-  // Try refreshing token on app load
   useEffect(() => {
     async function tryAutoLogin() {
       try {
@@ -45,15 +49,28 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to={accessToken ? "/dashboard" : "/login"} />} />
-        <Route path="/login" element={<Login setAccessToken={setAccessToken} />} />
+        <Route
+          path="/"
+          element={<Navigate to={accessToken ? "/dashboard" : "/login"} />}
+        />
+        <Route
+          path="/login"
+          element={<Login setAccessToken={setAccessToken} />}
+        />
         <Route path="/register" element={<Register />} />
-        <Route element={<Layout accessToken={accessToken} setAccessToken={setAccessToken} />}>
+        <Route
+          element={
+            <Layout accessToken={accessToken} setAccessToken={setAccessToken} />
+          }
+        >
           <Route
             path="/dashboard"
             element={
               <PrivateRoute accessToken={accessToken}>
-                <Dashboard accessToken={accessToken} setAccessToken={setAccessToken} />
+                <Dashboard
+                  accessToken={accessToken}
+                  setAccessToken={setAccessToken}
+                />
               </PrivateRoute>
             }
           />
@@ -61,7 +78,10 @@ export default function App() {
             path="/profile"
             element={
               <PrivateRoute accessToken={accessToken}>
-                <Profile accessToken={accessToken} setAccessToken={setAccessToken} />
+                <Profile
+                  accessToken={accessToken}
+                  setAccessToken={setAccessToken}
+                />
               </PrivateRoute>
             }
           />
