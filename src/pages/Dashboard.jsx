@@ -39,18 +39,37 @@ export default function Dashboard({ accessToken, setAccessToken }) {
       };
     });
 
-    const res = await fetch(`${BACKEND_URL}/api/predict`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ selections: paddedSelections }),
-    });
+    const [res1, res2] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/predict`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selections: paddedSelections }),
+      }),
 
-    const data = await res.json();
-    console.log("Prediction result:", data);
-    alert(`Prediction: ${data.prediction || "No prediction returned"}`);
+      fetch(`${BACKEND_URL}/api/predict2`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selections: paddedSelections }),
+      }),
+    ]);
+
+    const data1 = await res1.json();
+    const data2 = await res2.json();
+    console.log("Prediction result 1:", data1);
+    console.log("Prediction result 1:", data2);
+    alert(
+      `Predictions:
+      boosted decision tree model predicts: ${
+        data1.prediction || "No prediction returned"
+      }
+      neural network predicts: ${data2.prediction || "No prediction returned"}`
+    );
   };
 
   return (
